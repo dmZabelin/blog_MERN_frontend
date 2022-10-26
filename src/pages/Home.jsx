@@ -23,6 +23,10 @@ export const Home = () => {
     dispatch(fetchTags());
   }, []);
 
+  function fetchNewPosts() {
+    console.log("fetch");
+  }
+
   return (
     <>
       <Tabs
@@ -30,7 +34,7 @@ export const Home = () => {
         value={0}
         aria-label="basic tabs example"
       >
-        <Tab label="Новые" />
+        <Tab onClick={fetchNewPosts} label="Новые" />
         <Tab label="Популярные" />
       </Tabs>
       <Grid container spacing={4}>
@@ -40,6 +44,7 @@ export const Home = () => {
               <Post key={index} isLoading={true} />
             ) : (
               <Post
+                key={`post${index}`}
                 _id={obj._id}
                 title={obj.title}
                 imageUrl={

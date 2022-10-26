@@ -5,11 +5,12 @@ import Button from "@mui/material/Button";
 import styles from "./Header.module.scss";
 import Container from "@mui/material/Container";
 import { useDispatch, useSelector } from "react-redux";
-import { logout, selectIsAuth } from "../../redux/slices/auth";
+import { logout } from "../../redux/slices/auth";
 
 export const Header = () => {
   const dispatch = useDispatch();
-  const isAuth = useSelector(selectIsAuth);
+  const { data, status } = useSelector((state) => state.auth);
+  const isAuth = Boolean(data);
 
   const onClickLogout = () => {
     if (window.confirm("Are you sure?")) {
@@ -26,29 +27,41 @@ export const Header = () => {
             <div>DM BLOG</div>
           </Link>
           <div className={styles.buttons}>
-            {isAuth ? (
-              <>
-                <Link to="/add-post">
-                  <Button variant="contained">Написать статью</Button>
-                </Link>
-                <Button
-                  onClick={onClickLogout}
-                  variant="contained"
-                  color="error"
-                >
-                  Выйти
-                </Button>
-              </>
-            ) : (
-              <>
-                <Link to="/login">
-                  <Button variant="outlined">Войти</Button>
-                </Link>
-                <Link to="/signup">
-                  <Button variant="contained">Создать аккаунт</Button>
-                </Link>
-              </>
-            )}
+            {status !== "loading" ? (
+              isAuth ? (
+                <>
+                  <Link to="/add-post">
+                    <Button variant="contained">Написать статью</Button>
+                  </Link>
+                  <Link
+                    to="/cabinet"
+                    state={{
+                      data,
+                    }}
+                  >
+                    <Button variant="contained" color="success">
+                      Личный кабинет
+                    </Button>
+                  </Link>
+                  <Button
+                    onClick={onClickLogout}
+                    variant="contained"
+                    color="error"
+                  >
+                    Выйти
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login">
+                    <Button variant="outlined">Войти</Button>
+                  </Link>
+                  <Link to="/signup">
+                    <Button variant="contained">Создать аккаунт</Button>
+                  </Link>
+                </>
+              )
+            ) : null}
           </div>
         </div>
       </Container>

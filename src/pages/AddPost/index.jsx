@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { selectIsAuth } from "../../redux/slices/auth";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from "../../axios";
+import uploadImage from "../../common/uploadImage";
 
 export const AddPost = () => {
   const { id } = useParams();
@@ -31,15 +32,9 @@ export const AddPost = () => {
   const isEditing = Boolean(id);
 
   const handleChangeFile = async (e) => {
-    try {
-      const formData = new FormData();
-      formData.append("image", e.target.files[0]);
-      const { data } = await axios.post("/upload", formData);
-      setImageUrl(data.url);
-    } catch (err) {
-      console.warn(err);
-      alert("Error uploading file!");
-    }
+    uploadImage(e.target.files[0]).then((res) => {
+      setImageUrl(res.data.url);
+    });
   };
 
   const onClickRemoveImage = async () => {
