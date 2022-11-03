@@ -9,6 +9,7 @@ import axios from '../../axios';
 import Button from '@mui/material/Button';
 import uploadImage from '../../common/uploadImage';
 import { format } from 'date-fns';
+import { Modal } from '../../components/Modal';
 
 const inputHidden = {
 	userName: true,
@@ -26,6 +27,7 @@ export const Cabinet = () => {
 	const [isEdit, setIsEdit] = useState(true);
 	const [userData, setUserData] = useState({});
 	const [isVisible, setIsVisible] = useState(inputHidden);
+	const [isOpen, setIsOpen] = useState(false);
 
 	useEffect(() => {
 		setRect(refAvatar.current.getBoundingClientRect());
@@ -78,7 +80,7 @@ export const Cabinet = () => {
 			<div className={styles.personal} ref={refMain}>
 				<div>
 					<div className={styles.avatar} ref={refAvatar}>
-						<img src={userData.avatarUrl} alt={userData.fullName} />
+						<img src={userData.avatarUrl || '/noavatar.png'} alt={userData.fullName} />
 						{rect &&
 							createPortal(
 								<button
@@ -95,7 +97,9 @@ export const Cabinet = () => {
 							)}
 						<input ref={inputFileRef} type="file" onChange={handleChangeFile} hidden />
 					</div>
-					<button>change password</button>
+					<button className={styles.pwBtn} onClick={() => setIsOpen(true)}>
+						change password
+					</button>
 				</div>
 				<div className={styles.info}>
 					<div className={styles.name}>
@@ -141,12 +145,13 @@ export const Cabinet = () => {
 			</div>
 			<div className={styles.submitBtn}>
 				<Button disabled={isEdit} onClick={handleSubmit} size="large" variant="contained">
-					Сохранить
+					Save
 				</Button>
 				<Button disabled={isEdit} size="large">
-					Отмена
+					Cancel
 				</Button>
 			</div>
+			{isOpen && <Modal setIsOpen={setIsOpen} />}
 		</>
 	);
 };

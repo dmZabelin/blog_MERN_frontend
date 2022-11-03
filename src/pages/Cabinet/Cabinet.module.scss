@@ -5,7 +5,7 @@
 }
 
 .avatar {
-	margin-right: 50px;
+	margin-bottom: 20px;
 	width: 250px;
 	height: 250px;
 	img {
@@ -17,7 +17,18 @@
 	overflow-y: hidden;
 }
 
+.pwBtn {
+	margin: auto;
+	display: block;
+	font-size: 16px;
+	border: none;
+	background-color: transparent;
+	color: #4361ee;
+	cursor: pointer;
+}
+
 .info {
+	margin-left: 50px;
 	padding-top: 20px;
 	display: flex;
 	flex-direction: column;
