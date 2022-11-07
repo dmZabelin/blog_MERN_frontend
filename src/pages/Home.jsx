@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Grid from '@mui/material/Grid';
@@ -6,43 +6,30 @@ import Grid from '@mui/material/Grid';
 import { Post, TagsBlock, CommentsBlock } from '../components';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchPosts, fetchTags, sortedByData, sortedByViews } from '../redux/slices/posts';
+import { fetchPosts, fetchTags } from '../redux/slices/posts';
 
 export const Home = () => {
 	const dispatch = useDispatch();
 	const { posts, tags } = useSelector((state) => state.posts);
-	const initialTab = posts.sorted === 'views' ? 1 : 0;
+	const activeTab = posts.sorted === 'views' ? 1 : 0;
 	const userData = useSelector((state) => state.auth.data);
-	const [tabs, setTabs] = useState(initialTab);
 
 	const isPostsLoading = posts.status === 'loading';
 	const isTagsLoading = tags.status === 'loading';
 
 	useEffect(() => {
-		dispatch(fetchPosts()).then(() => {
-			if (posts.sorted === 'views') {
-				dispatch(sortedByViews());
-			} else {
-				dispatch(sortedByData());
-			}
-		});
+		dispatch(fetchPosts(posts.sorted || ''));
 		dispatch(fetchTags());
 	}, []);
 
 	const sortedPosts = (e) => {
 		const { sort } = e.target.dataset;
-		if (sort === 'new') {
-			dispatch(sortedByData());
-			setTabs(0);
-			return;
-		}
-		dispatch(sortedByViews());
-		setTabs(1);
+		dispatch(fetchPosts(sort));
 	};
 
 	return (
 		<>
-			<Tabs style={{ marginBottom: 15 }} value={tabs} aria-label="basic tabs example">
+			<Tabs style={{ marginBottom: 15 }} value={activeTab} aria-label="basic tabs example">
 				<Tab onClick={sortedPosts} label="Новые" data-sort="new" />
 				<Tab onClick={sortedPosts} label="Популярные" data-sort="views" />
 			</Tabs>

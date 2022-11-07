@@ -1,9 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from '../../axios';
 
-export const fetchPosts = createAsyncThunk('POSTS/fetchPosts', async () => {
-	const { data } = await axios.get('/posts');
-	return data;
+export const fetchPosts = createAsyncThunk('POSTS/fetchPosts', async (sortedBy = 'new') => {
+	const { data } = await axios.get('/posts', {
+		params: {
+			sortedBy
+		}
+	});
+	return { data, sortedBy };
 });
 
 export const fetchTags = createAsyncThunk('POSTS/fetchTags', async () => {
@@ -31,16 +35,7 @@ const initialState = {
 const postsSlice = createSlice({
 	name: 'POSTS',
 	initialState,
-	reducers: {
-		sortedByData: (state) => {
-			state.posts.items = state.posts.items.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-			state.posts.sorted = 'new';
-		},
-		sortedByViews: (state) => {
-			state.posts.items = state.posts.items.sort((a, b) => b.viewsCount - a.viewsCount);
-			state.posts.sorted = 'views';
-		}
-	},
+	reducers: {},
 	extraReducers: {
 		//Get Posts
 		[fetchPosts.pending]: (state) => {
@@ -48,7 +43,8 @@ const postsSlice = createSlice({
 			state.posts.status = 'loading';
 		},
 		[fetchPosts.fulfilled]: (state, action) => {
-			state.posts.items = action.payload;
+			state.posts.items = action.payload.data;
+			state.posts.sorted = action.payload.sortedBy;
 			state.posts.status = 'loaded';
 		},
 		[fetchPosts.rejected]: (state) => {
@@ -78,5 +74,5 @@ const postsSlice = createSlice({
 	}
 });
 
-export const { sortedByData, sortedByViews } = postsSlice.actions;
+export const { sorted } = postsSlice.actions;
 export const postsReducer = postsSlice.reducer;
